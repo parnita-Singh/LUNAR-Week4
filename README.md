@@ -1,6 +1,6 @@
 # Lunar Hollow: The Vanished Webmaster
 
-A small mystery set on a fictional 2000s fan site.s Four guestbook suspects, a few clues, and a locked archive. Everything runs in the browser with no internet, no model, and no external assets.
+A small mystery set on a fictional 2000s fan site. Four guestbook suspects, a few clues, and a locked archive. Everything runs in the browser with no internet, no model, and no external assets.
 
 ## Run it
 

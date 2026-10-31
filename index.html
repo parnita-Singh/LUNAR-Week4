@@ -3,139 +3,253 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lunar Hollow: The Vanished Webmaster</title>
+<title>Lunar Hollow</title>
 <style>
+  :root {
+    --bg: #120f0c;
+    --cork: #3a2a1d;
+    --paper: #ebdfc4;
+    --ink: #2a2118;
+    --string: #a8262a;
+    --gold: #e0b869;
+    --text: #d9cfbb;
+    --muted: #8f8474;
+    --line: #3d3328;
+  }
+  * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: #000 url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7") repeat;
-    background-color: #05001a;
-    color: #c8ffc8;
-    font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, #2a1f16 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 100%, #000 0%, transparent 70%),
+      var(--bg);
+    color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.55;
   }
-  #stars {
-    position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background-image:
-      radial-gradient(1px 1px at 20px 30px, #fff, transparent),
-      radial-gradient(1px 1px at 120px 80px, #ffd, transparent),
-      radial-gradient(2px 2px at 200px 150px, #9cf, transparent),
-      radial-gradient(1px 1px at 300px 40px, #fff, transparent);
-    background-size: 340px 200px;
-    animation: drift 60s linear infinite;
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 18px 60px; }
+
+  header { text-align: center; margin-bottom: 22px; }
+  header .eyebrow {
+    font-family: "Courier New", monospace; font-size: 12px;
+    letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase;
   }
-  @keyframes drift { to { background-position: 340px 200px; } }
-  .blink { animation: blink 1s steps(2, start) infinite; }
-  @keyframes blink { to { visibility: hidden; } }
-  .marquee-line { color: #ff0; white-space: nowrap; overflow: hidden; }
-  a { color: #6cf; }
-  a.dead { color: #888; text-decoration: line-through; cursor: not-allowed; }
-  h1 { color: #ff66cc; text-shadow: 2px 2px #330033; font-size: 2em; text-align: center; margin: 12px 0 4px; }
-  h2 { color: #ffcc00; border-bottom: 2px dotted #ffcc00; }
-  .wrap { width: 760px; max-width: 96vw; margin: 0 auto; padding: 8px; }
-  .box { border: 3px ridge #66ccff; background: rgba(10, 0, 40, 0.85); padding: 12px; margin: 10px 0; }
-  .nav a { margin-right: 8px; }
-  .hidden-clue { display: none; }
-  .suspect { display: inline-block; width: 160px; vertical-align: top; margin: 6px; padding: 6px;
-             border: 1px dashed #ff99cc; background: #120020; cursor: pointer; font-size: 13px; }
-  .suspect:hover { background: #2a0040; }
-  .flash { animation: flash 0.4s steps(3) 2; }
-  @keyframes flash { 50% { background: #fff; color: #000; } }
-  #log { min-height: 80px; font-family: "Courier New", monospace; font-size: 13px; color: #9f9; }
-  button { font-family: inherit; background: #222; color: #ff0; border: 2px outset #999; padding: 4px 10px; cursor: pointer; }
-  button:active { border-style: inset; }
-  input[type=text] { background: #000; color: #0f0; border: 1px solid #0f0; padding: 3px; font-family: "Courier New", monospace; }
-  .counter { font-family: "Courier New", monospace; background: #000; color: #0f0; border: 2px inset #888; padding: 2px 6px; display: inline-block; }
-  .footer { text-align: center; font-size: 12px; color: #aaa; margin: 16px 0; }
+  h1 {
+    margin: 8px 0 0; font-family: "Courier New", monospace;
+    font-size: 2rem; letter-spacing: 0.12em; color: var(--gold); font-weight: bold;
+  }
+  .subtitle { color: var(--muted); font-style: italic; margin-top: 6px; }
+
+  nav { display: flex; justify-content: center; gap: 10px; margin: 22px 0; }
+  nav button {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--line); padding: 8px 18px;
+    font-family: "Courier New", monospace; font-size: 13px; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+  }
+  nav button:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ---------- Case board ---------- */
+  .board {
+    position: relative; width: 800px; max-width: 100%; height: 520px; margin: 0 auto;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,230,180,0.08), transparent 55%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 9px),
+      var(--cork);
+    border: 14px solid #2a1d13; border-radius: 6px;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.6), 0 16px 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+  .board svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .board svg line { stroke: var(--string); stroke-width: 2.5; stroke-linecap: round; opacity: 0.9; }
+
+  .note {
+    position: absolute; width: 200px; padding: 14px 14px 12px;
+    background: var(--paper); color: var(--ink);
+    font-family: "Courier New", monospace; font-size: 12.5px; line-height: 1.45;
+    box-shadow: 3px 6px 10px rgba(0,0,0,0.45);
+    cursor: pointer; transition: transform 0.15s ease;
+  }
+  .note:hover { transform: translateY(-3px) rotate(0deg) !important; }
+  .note::before {
+    content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ff6b6b, #7a1515 70%);
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.6);
+  }
+  .note .name { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+  .note .role { font-style: italic; color: #5b4a38; margin-bottom: 8px; }
+  .note .quote { border-left: 2px solid #9a8566; padding-left: 8px; color: #3b2f22; }
+  .note .stamp {
+    position: absolute; right: 10px; bottom: 10px; font-weight: bold;
+    color: #7a1515; border: 2px solid #7a1515; padding: 1px 6px;
+    transform: rotate(-12deg); opacity: 0; transition: opacity 0.3s;
+    font-size: 11px; letter-spacing: 0.1em;
+  }
+  .note.checked .stamp { opacity: 0.85; }
+
+  .n-chem  { left: 40px;  top: 40px;  --r: -2deg; transform: rotate(-2deg); }
+  .n-bio   { left: 560px; top: 40px;  --r: 3deg;  transform: rotate(3deg); }
+  .n-math  { left: 40px;  top: 330px; --r: 2deg;  transform: rotate(2deg); }
+  .n-hist  { left: 560px; top: 340px; --r: -3deg; transform: rotate(-3deg); }
+
+  .photo {
+    position: absolute; left: 300px; top: 150px; width: 200px; padding: 10px 10px 36px;
+    background: #f4ecd9; box-shadow: 4px 8px 14px rgba(0,0,0,0.5); transform: rotate(-1deg);
+    font-family: "Courier New", monospace; font-size: 12px; color: var(--ink); text-align: center;
+  }
+  .photo .frame {
+    height: 150px; background: radial-gradient(ellipse at 50% 35%, #3b3a46, #0e0d12 75%);
+    position: relative; overflow: hidden;
+  }
+  .photo .frame::after {
+    content: ""; position: absolute; left: 50%; top: 40%; width: 44px; height: 44px;
+    margin-left: -22px; border-radius: 50%; background: #0a090d; box-shadow: 0 60px 0 -10px #0a090d;
+  }
+  .photo .caption { margin-top: 8px; font-weight: bold; }
+
+  /* ---------- Panels ---------- */
+  .panel {
+    margin-top: 22px; padding: 20px 22px;
+    background: var(--paper); color: var(--ink);
+    box-shadow: 3px 6px 14px rgba(0,0,0,0.4);
+    font-family: "Courier New", monospace; font-size: 14px;
+  }
+  .panel h3 {
+    margin: 0 0 10px; font-family: Georgia, serif; font-size: 1.05rem;
+    font-weight: normal; letter-spacing: 0.08em; text-transform: uppercase; color: #5b4a38;
+    border-bottom: 1px dashed #a08c6b; padding-bottom: 6px;
+  }
+  #log2 { min-height: 64px; color: #3b2f22; }
+  #notes p { margin: 0 0 8px; padding-left: 14px; position: relative; }
+  #notes p::before { content: "-"; position: absolute; left: 0; }
+
+  /* ---------- Case file ---------- */
+  .card {
+    background: var(--paper); color: var(--ink); padding: 24px 26px;
+    box-shadow: 3px 6px 14px rgba(0,0,0,0.4); line-height: 1.65;
+  }
+  .card h2 {
+    margin: 0 0 12px; font-family: "Courier New", monospace; font-size: 1.1rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .card p { margin: 0 0 12px; }
+  .progress { font-family: "Courier New", monospace; color: #5b4a38; }
+  .unlock { margin-top: 16px; font-family: "Courier New", monospace; }
+  .unlock input {
+    background: #fffaf0; border: 1px solid #a08c6b; padding: 6px 8px;
+    font-family: "Courier New", monospace; font-size: 14px; width: 140px;
+  }
+  .unlock button {
+    background: var(--ink); color: var(--paper); border: 0; padding: 7px 14px;
+    font-family: "Courier New", monospace; cursor: pointer; letter-spacing: 0.1em;
+  }
+  #log { margin-top: 10px; font-family: "Courier New", monospace; color: #7a1515; min-height: 20px; }
+  #archive { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #a08c6b; }
+
+  footer { text-align: center; font-size: 12px; color: var(--muted); margin-top: 30px; font-style: italic; }
+
+  @media (max-width: 820px) {
+    .board { height: auto; min-height: 520px; }
+  }
 </style>
 </head>
 <body>
-<div id="stars"></div>
-
 <div class="wrap">
-  <div class="marquee-line">*** WELCOME TO LUNAR HOLLOW *** SIGN MY GUESTBOOK *** THE MOON REMEMBERS ***</div>
-  <h1>&#9733; Lunar Hollow &#9733;</h1>
-  <p style="text-align:center"><span class="blink">UNDER CONSTRUCTION</span> &middot; est. 1999 &middot; last updated: <b>March 2004</b></p>
 
-  <div class="nav">
-    <a href="#" onclick="show('home');return false;">Home</a>
-    <a href="#" onclick="show('case');return false;">The Case</a>
-    <a href="#" onclick="show('guestbook');return false;">Guestbook</a>
-    <a href="#" onclick="show('links');return false;">Links</a>
-    <a class="dead" href="#" onclick="alert('404: The page you requested has been lost to the moon.');return false;">Photo Gallery</a>
-  </div>
+  <header>
+    <div class="eyebrow">Case file &middot; Lunar Hollow &middot; March 2004</div>
+    <h1>THE VANISHED WEBMASTER</h1>
+    <div class="subtitle">Nightowl_Ren stopped posting. Question the fans. Find the note.</div>
+  </header>
 
-  <!-- ============ HOME ============ -->
-  <div id="home" class="box">
-    <h2>Welcome, traveler</h2>
-    <p>This site was the home of the Lunar Hollow fan club. The webmaster, <b>Nightowl_Ren</b>, posted every night until one evening in March 2004. Then the updates stopped.</p>
-    <p>Nobody has heard from Ren since. The guestbook is still open. The view counter stopped too.</p>
-    <p>Visitors: <span class="counter" id="counter">004117</span></p>
-    <!-- TODO: remember to fix the locked page before the moon is full. password = the 3rd prime after 10 -->
-    <p class="blink" style="color:#f66">Click a suspect in the guestbook to question them.</p>
-  </div>
+  <nav>
+    <button onclick="show('guestbook')">Case board</button>
+    <button onclick="show('case')">Archive</button>
+  </nav>
 
-  <!-- ============ CASE ============ -->
-  <div id="case" class="box" style="display:none">
-    <h2>The Case File</h2>
-    <p>On the night of <b>March 14, 2004</b>, Ren's last post promised a "surprise reveal." It never came. The site's private archive was locked the next morning.</p>
-    <p>Four fans were active in the guestbook that month. Question them, check their entries, and find the clues.</p>
-    <p><i>Clues found: <span id="cluecount">0</span> / 8</i></p>
-    <p>Unlock the archive: <input type="text" id="pw" placeholder="password"> <button onclick="tryPw()">Enter</button></p>
-    <div id="archive" class="hidden-clue">
-      <p><b>ARCHIVE UNLOCKED.</b> Ren's final draft is here. It is short. It says only: <span id="finalnote">"nothing is missing, it is all in the jar."</span></p>
+  <!-- ============ CASE BOARD (id kept as "guestbook" for app.js) ============ -->
+  <section id="guestbook">
+    <div class="board">
+      <svg viewBox="0 0 800 520" preserveAspectRatio="none">
+        <!-- string from the photo center to each suspect -->
+        <line x1="400" y1="250" x2="140" y2="100"></line>
+        <line x1="400" y1="250" x2="660" y2="100"></line>
+        <line x1="400" y1="250" x2="140" y2="390"></line>
+        <line x1="400" y1="250" x2="660" y2="400"></line>
+      </svg>
+
+      <div class="photo">
+        <div class="frame"></div>
+        <div class="caption">NIGHTOWL_REN</div>
+        <div style="font-size:11px;color:#5b4a38;">last seen 14 Mar 2004</div>
+      </div>
+
+      <div class="note n-chem" onclick="question('chem'); this.classList.add('checked')">
+        <div class="name">xX_BeakerBoi_Xx</div>
+        <div class="role">Chemistry</div>
+        <div class="quote">"Nice site! I left a jar label on the page, look closely."</div>
+        <div class="stamp">CHECKED</div>
+      </div>
+
+      <div class="note n-bio" onclick="question('bio'); this.classList.add('checked')">
+        <div class="name">LeafyLurker99</div>
+        <div class="role">Biology</div>
+        <div class="quote">"Pressed this leaf in October. Still pretty, right?"</div>
+        <div class="stamp">CHECKED</div>
+      </div>
+
+      <div class="note n-math" onclick="question('math'); this.classList.add('checked')">
+        <div class="name">NumberNinja_42</div>
+        <div class="role">Mathematics</div>
+        <div class="quote">"The numbers on the front page always add up. Always."</div>
+        <div class="stamp">CHECKED</div>
+      </div>
+
+      <div class="note n-hist" onclick="question('hist'); this.classList.add('checked')">
+        <div class="name">OldTimeyOtto</div>
+        <div class="role">History</div>
+        <div class="quote">"Ren posted on Tuesday, March 14. Wait, no, it was Thursday."</div>
+        <div class="stamp">CHECKED</div>
+      </div>
     </div>
-    <div id="log"></div>
-  </div>
 
-  <!-- ============ GUESTBOOK ============ -->
-  <div id="guestbook" class="box" style="display:none">
-    <h2>Guestbook</h2>
-    <p>Click a suspect to see their entry and question them.</p>
-    <div class="suspect" onclick="question('chem')">
-      <b>xX_BeakerBoi_Xx</b><br>
-      <small>Chemistry</small><br>
-      "Nice site! I left a jar label on the page, look closely."
+    <div class="panel">
+      <h3>Interview transcript</h3>
+      <div id="log2">Click a suspect pinned to the board.</div>
     </div>
-    <div class="suspect" onclick="question('bio')">
-      <b>LeafyLurker99</b><br>
-      <small>Biology</small><br>
-      "Pressed this leaf in October. Still pretty, right?"
-    </div>
-    <div class="suspect" onclick="question('math')">
-      <b>NumberNinja_42</b><br>
-      <small>Mathematics</small><br>
-      "The numbers on the front page always add up. Always."
-    </div>
-    <div class="suspect" onclick="question('hist')">
-      <b>OldTimeyOtto</b><br>
-      <small>History</small><br>
-      "Ren posted on Tuesday, March 14. Wait, no, it was Thursday."
-    </div>
-    <div id="log2"></div>
-  </div>
 
-  <!-- ============ LINKS ============ -->
-  <div id="links" class="box" style="display:none">
-    <h2>Links</h2>
-    <ul>
-      <li><a class="dead" href="#" onclick="alert('This link is dead. The river took it.');return false;">Riverside Ecology Club</a></li>
-      <li><a class="dead" href="#" onclick="alert('Page not found. A dosage chart stayed behind.');return false;">Old First-Aid Page</a></li>
-      <li><a href="#" onclick="show('case');return false;">The Case File (working link)</a></li>
-    </ul>
-    <!-- hidden clue: a plain text note meant for anyone who reads the source -->
-    <div class="hidden-clue">Hint: the first letter of each suspect's handle spells a word when read top to bottom.</div>
-  </div>
+    <div class="panel">
+      <h3>Evidence notebook</h3>
+      <div id="notes">No clues yet.</div>
+    </div>
+  </section>
 
-  <!-- ============ CLUE LOG ============ -->
-  <div class="box">
-    <h2>Notebook</h2>
-    <div id="notes">No clues yet.</div>
-  </div>
+  <!-- ============ ARCHIVE / CASE FILE ============ -->
+  <section id="case" style="display:none">
+    <div class="card">
+      <h2>Case file</h2>
+      <p>On the night of <b>March 14, 2004</b>, Ren's last post promised a "surprise reveal." It never came. The private archive was locked the next morning.</p>
+      <p>Four fans were active in the guestbook that month. Their clues are on the board. Put them together to find the password.</p>
+      <p class="progress">Clues found: <span id="cluecount">0</span> / 4</p>
 
-  <div class="footer">Best viewed in 800x600. Sign the guestbook. Ren was here.</div>
+      <div class="unlock">
+        <input type="text" id="pw" placeholder="password">
+        <button onclick="tryPw()">UNLOCK</button>
+        <div id="log"></div>
+      </div>
+
+      <div id="archive">
+        <p><b>ARCHIVE UNLOCKED.</b> Ren's final draft is short. It says only: <span>"nothing is missing, it is all in the jar."</span></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Sign the guestbook. Ren was here.</footer>
 </div>
 
+<!-- Hidden in source for players who check it: the password pattern is the primes after 10. -->
 <script src="app.js"></script>
 </body>
 </html>
